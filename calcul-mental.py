@@ -1,50 +1,61 @@
 #!/usr/bin/python3
 
-from random import randint
-import pygame, sys
+import pygame,random
+ 
+NOIR = 0,0,0  # initialise la couleur noir
+nombre1 = 0 # initialise la variable du premier entier 
+nombre2 = 0 # initialise la variable du second entier 
 
-def main() : 
+nombre1 = random.randint(0,100) # prend un chiffre au hazard entre 0 et 100
+nombre2 = random.randint(0,100)  # prend un chiffre au hazard entre 0 et 100
+ 
+pygame.init() # initialise pygame
+screen = pygame.display.set_mode((640, 480)) # definis la taille de la fenêtre
+center_x, center_y = 320, 240 # définis les milieux
 
-    nombre1 = 0 # initialise la variable du premier entier 
-    nombre2 = 0 # initialise la variable du second entier 
-    nombre1 = randint(0,100)
-    nombre2 = randint(0,100)
+font = pygame.font.Font(None, 70) # taille du texte
+titre = font.render("Jeux de calcul mental",1,(0,0,0)) # variable du texte 
+textpos = titre.get_rect() # prend les positions de la fenêtre
+textpos.centerx = screen.get_rect().centerx # calcule le centre 
 
-    pygame.init()
-    size = width, height = 1000, 1000 # taille de la fenêtre 
-    screen = pygame.display.set_mode(size) # affiche la fenêtre
-    pygame.display.set_caption('Calcul mental') # nom de la fenêtre 
-    rectScreen = screen.get_rect() # calcule les dimensions du rectangle
-
-    # fond 
-    background = pygame.Surface(screen.get_size())# prend la taille du fond 
-    background = background.convert()
-    background.fill((250, 250, 250)) # initialise la couleur du fond
-
-    # TITRE  
-    font = pygame.font.Font(None, 70) # taille du texte
-    titre = font.render("Jeux de calcul mental",1,(10, 10, 10)) # variable du texte 
-    textpos = titre.get_rect() # prend les positions de la fenêtre
-    textpos.centerx = background.get_rect().centerx # calcule le centre 
-    background.blit(titre, textpos) # fait le rendu du texte au centre 
-
-    # OPERATION 
-    font = pygame.font.Font(None, 50) # taille du texte & police 
-    addition = font.render(str(nombre1)+" + "+str(nombre2)+" = ",True,(10,10,10)) # initialisation du texte
-    rectAddition = screen.get_rect() # prend les mesures du rectangle ( fenêtre )
-    background.blit(addition,rectAddition.center) # faire un rendu, le texte aura pour position le centre 
-
-    # faire le rendu des éléments 
-    screen.blit(background, (0, 0)) # blit = rendu 
-    pygame.display.flip() # affiche le jeux
-
-    # boucle infini qui test si l'utilisateur veut quitter le programme
-    while 1:
-        for event in pygame.event.get(): # pygame regarde tout les événements 
-            if event.type == pygame.QUIT: # si l'utilisteur veut quitter le jeux
-                return sys.exit() # quitte le programme
-
-
-if __name__ == "__main__":
-  main()
-  
+ 
+clock = pygame.time.Clock() # créé une horloge
+font = pygame.font.SysFont(None , 24) 
+addition = font.render(str(nombre1)+" + "+str(nombre2)+" = ",True, NOIR)
+addition_rect = addition.get_rect(center=(center_x, center_y))
+ 
+user_input_value = ""
+user_input = font.render(user_input_value, True, NOIR)
+user_input_rect = user_input.get_rect(topleft=addition_rect.topright)
+ 
+continuer = True
+ 
+while continuer:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            continuer = False
+            break
+        elif event.type == pygame.KEYDOWN:
+            if event.key in (pygame.K_RETURN, pygame.K_KP_ENTER):
+                continuer = False
+                break
+            elif event.key == pygame.K_BACKSPACE:
+                reponse = user_input_value
+                print("reponse"+str(reponse))
+                user_input_value = user_input_value[:-1]
+            else:
+                user_input_value += event.unicode
+            user_input = font.render(user_input_value, True, NOIR)
+            user_input_rect = user_input.get_rect(topleft=addition_rect.topright)
+ 
+    clock.tick(30)
+ 
+    screen.fill("#FFFFFF")
+    screen.blit(addition, addition_rect)
+    screen.blit(user_input, user_input_rect)
+    screen.blit(titre, textpos) # fait le rendu du texte au centre 
+    pygame.display.flip()
+ 
+print("le résultat:", int(user_input_value))
+ 
+pygame.quit()
