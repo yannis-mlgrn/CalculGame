@@ -19,43 +19,45 @@ textpos = titre.get_rect() # prend les positions de la fenêtre
 textpos.centerx = screen.get_rect().centerx # calcule le centre 
 
  
-clock = pygame.time.Clock() # créé une horloge
-font = pygame.font.SysFont(None , 24) 
-addition = font.render(str(nombre1)+" + "+str(nombre2)+" = ",True, NOIR)
-addition_rect = addition.get_rect(center=(center_x, center_y))
+font = pygame.font.SysFont(None , 50) # taille & police du texte
+addition = font.render(str(nombre1)+" + "+str(nombre2)+" = ",True, NOIR) # variable ou on stocke l'addition
+addition_rect = addition.get_rect(center=(center_x, center_y)) # centrer le texte de l'operation
  
-user_input_value = ""
-user_input = font.render(user_input_value, True, NOIR)
-user_input_rect = user_input.get_rect(topleft=addition_rect.topright)
+user_input_value = "" # initialise la valeur de l'input
+user_input = font.render(user_input_value, True, NOIR) # rendu de l'input
+user_input_rect = user_input.get_rect(topleft=addition_rect.topright) # mettre l'input juste à droite de l'opération 
  
-continuer = True
- 
+continuer = True # boolean qui peut servir pour rejouer ou pas 
+
+
+# GESTION DU CLAVIER
 while continuer:
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            continuer = False
-            break
+
+    for event in pygame.event.get(): # analyse tout les evenements
+        if event.type == pygame.QUIT: # si l'utilisateur veut quitter le jeux
+            continuer = False # mettre conttinuer a false pour quitter 
+            break # quitter la boucle actuel
         elif event.type == pygame.KEYDOWN:
-            if event.key in (pygame.K_RETURN, pygame.K_KP_ENTER):
-                continuer = False
-                break
-            elif event.key == pygame.K_BACKSPACE:
-                reponse = user_input_value
-                print("reponse"+str(reponse))
-                user_input_value = user_input_value[:-1]
+            if event.key == pygame.K_ESCAPE : # si on appuie sur la touche suppr
+                continuer = False # mettre la variable continuer à False et donc quitter le jeux
+            elif event.key == pygame.K_BACKSPACE: # sinon si on appui sur la touche "backspace" (touche habituel pour supprimer du texte)
+                user_input_value = user_input_value[:-1] # enlever le dernier caractere de l'input
+            elif event.key == pygame.K_RETURN: # sinon si on appui sur la touche entrée 
+                reponse = user_input_value # mettre dans une variable la valeur de l'input
+                print("reponse  = "+reponse) # afficher le résultat entré
             else:
                 user_input_value += event.unicode
-            user_input = font.render(user_input_value, True, NOIR)
-            user_input_rect = user_input.get_rect(topleft=addition_rect.topright)
+            user_input = font.render(user_input_value, True, NOIR) # rendu de l'input, mettre son texte en noir
+            user_input_rect = user_input.get_rect(topleft=addition_rect.topright) # placé l'input ujste a droite du texte de l'opperation
  
-    clock.tick(30)
- 
-    screen.fill("#FFFFFF")
-    screen.blit(addition, addition_rect)
-    screen.blit(user_input, user_input_rect)
+    
+    # RENDU DES ELEMENTS 
+    screen.fill("#FFFFFF") # couleur du fond
+    screen.blit(addition, addition_rect) # rendu de addition 
+    screen.blit(user_input, user_input_rect) # rendu de l'input 
     screen.blit(titre, textpos) # fait le rendu du texte au centre 
     pygame.display.flip()
  
-print("le résultat:", int(user_input_value))
+print("le résultat:", int(user_input_value)) # afficher le resultat
  
-pygame.quit()
+pygame.quit() # quitter pygame 
